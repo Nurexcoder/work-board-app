@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import {  useState } from "react";
+import TodoCard from "./components/TodoCard";
+import AllSection from "./components/AllSection";
+import styled from 'styled-components';
 
+const Component=styled.div`
+    margin: 0;
+    padding:  0 10px;
+    height: 100vh;
+    overflow: hidden;
+
+`
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [data, setData] = useState();
+    return (
+        <Component>
+            {/* <TodoCard /> */}
+            <AllSection />
+        </Component>
+    );
 }
 
 export default App;
