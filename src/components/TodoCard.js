@@ -31,6 +31,9 @@ const Desc = styled.p`
     font-size: 0.9rem;
     line-height: 20px;
 `;
+const Tag=styled.span`
+
+`
 export default function TodoCard({ todoData, isChanged, setIsChanged }) {
     const data = {
         title: "The work",
@@ -51,6 +54,11 @@ export default function TodoCard({ todoData, isChanged, setIsChanged }) {
                 </CardHeader>
 
                 <Desc>{todoData.desc}</Desc>
+                {todoData.isArchive&&(
+                    <Tag>
+                        #{todoData.tag===0?"Todo":todoData.tag===1?"Progress":"Done"}
+                    </Tag>
+                )}
             </CardContent>
         </CardComponent>
     );

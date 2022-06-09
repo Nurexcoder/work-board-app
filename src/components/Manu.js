@@ -67,12 +67,26 @@ export default function ManuButton({ data, isChanged, setIsChanged }) {
         setAnchorEl(null);
     };
     const handleToProgress = () => {
-        let curTodo = JSON.parse(localStorage.getItem("todos"));
-        let newTodo = curTodo.filter((todo) => todo.key !== data.key);
-        localStorage.setItem("todos", JSON.stringify(newTodo));
-
+        let newItem;
+        console.log(data);
+        if (data.isArchive === true) {
+            console.log("Hi");
+            let curArchive = JSON.parse(localStorage.getItem("archive"));
+            console.log(curArchive);
+            let newArchive = curArchive.filter((todo) => todo.key !== data.key);
+            localStorage.setItem("archive", JSON.stringify(newArchive));
+            newItem = curArchive.filter((todo) => todo.key === data.key);
+            console.log(curArchive);
+            console.log(newItem);
+            console.log(data.key);
+            newItem[0].isArchive = false;
+        } else {
+            let curTodo = JSON.parse(localStorage.getItem("todos"));
+            let newTodo = curTodo.filter((todo) => todo.key !== data.key);
+            localStorage.setItem("todos", JSON.stringify(newTodo));
+            newItem = curTodo.filter((todo) => todo.key === data.key);
+        }
         let curProgress = JSON.parse(localStorage.getItem("progress"));
-        let newItem = curTodo.filter((todo) => todo.key === data.key);
         newItem[0].tag = 1;
         curProgress.push(...newItem);
 
@@ -82,20 +96,28 @@ export default function ManuButton({ data, isChanged, setIsChanged }) {
     };
     const handleToDone = () => {
         let newItem;
-        if (data.tag === 1) {
+        if (data.isArchive) {
+            console.log("Hi");
+            let curArchive = JSON.parse(localStorage.getItem("archive"));
+            console.log(curArchive);
+            let newArchive = curArchive.filter((todo) => todo.key !== data.key);
+            localStorage.setItem("archive", JSON.stringify(newArchive));
+            newItem = curArchive.filter((todo) => todo.key === data.key);
+            newItem[0].isArchive = false;
+        } else if (data.tag === 1) {
             let curProgress = JSON.parse(localStorage.getItem("progress"));
             let newProgress = curProgress.filter(
                 (todo) => todo.key !== data.key
             );
             localStorage.setItem("progress", JSON.stringify(newProgress));
             newItem = curProgress.filter((todo) => todo.key === data.key);
-        }
-        if (data.tag === 0) {
+        } else if (data.tag === 0) {
             let curTodo = JSON.parse(localStorage.getItem("todos"));
             let newTodo = curTodo.filter((todo) => todo.key !== data.key);
             localStorage.setItem("todos", JSON.stringify(newTodo));
             newItem = curTodo.filter((todo) => todo.key === data.key);
         }
+        console.log(newItem);
         newItem[0].tag = 2;
         let curDone = JSON.parse(localStorage.getItem("done"));
         curDone.push(...newItem);
@@ -105,6 +127,12 @@ export default function ManuButton({ data, isChanged, setIsChanged }) {
         setIsChanged(!isChanged);
     };
     const handleDelete = () => {
+        if (data.isArchive) {
+            let curTodo = JSON.parse(localStorage.getItem("archive"));
+            let newTodo = curTodo.filter((todo) => todo.key !== data.key);
+            console.log(newTodo);
+            localStorage.setItem("archive", JSON.stringify(newTodo));
+        }
         if (data.tag === 0) {
             let curTodo = JSON.parse(localStorage.getItem("todos"));
             let newTodo = curTodo.filter((todo) => todo.key !== data.key);
@@ -146,7 +174,7 @@ export default function ManuButton({ data, isChanged, setIsChanged }) {
             newItem = curTodo.filter((todo) => todo.key === data.key);
         }
         let curArchive = JSON.parse(localStorage.getItem("archive"));
-        newItem[0].tag = 3;
+        newItem[0].isArchive = true;
         curArchive.push(...newItem);
         localStorage.setItem("archive", JSON.stringify(curArchive));
         handleClose();
@@ -175,7 +203,12 @@ export default function ManuButton({ data, isChanged, setIsChanged }) {
                 onClose={handleClose}>
                 <MenuItem
                     onClick={handleToProgress}
-                    disabled={data.tag !== 0}
+                    disabled={
+                        data.tag !== 0 ||
+                        (data.tag === 1 && data.isArchive === true)
+                            ? false
+                            : true
+                    }
                     disableRipple>
                     <SyncIcon />
                     Move to Progress
@@ -188,7 +221,10 @@ export default function ManuButton({ data, isChanged, setIsChanged }) {
                     Move to Done
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleToArchive} disableRipple>
+                <MenuItem
+                    onClick={handleToArchive}
+                    disabled={data.isArchive}
+                    disableRipple>
                     <ArchiveIcon />
                     Move to Archive
                 </MenuItem>
